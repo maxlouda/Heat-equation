@@ -88,8 +88,8 @@ __global__ void heatFlowShared(f32* T_old, f32* T_new, u32 size_xy, f32 dx2, f32
 u32 main() {
     f64 start1 = measureTime();
 
-    u32 size_xy = 4096;
-    u32 n_steps = 10000;
+    u32 size_xy = 2048;
+    u32 n_steps = 10001;
     f32 eta = 1.0;
     f32 dx = 1.0 / size_xy;
     f32 dx2 = dx * dx;
@@ -97,9 +97,8 @@ u32 main() {
     f64 pi = acos(-1);
 
     f32* T_old = (f32*)malloc(sizeof(*T_old) * size_xy * size_xy);
-    for (u32 i = 0; i < size_xy * size_xy; i++) {
-        T_old[i] = 0.0;
-    }
+    
+    memset(T_old, 0.0, size_xy * size_xy * 4);
 
     f32* T_old_d;
     f32* T_new_d;
