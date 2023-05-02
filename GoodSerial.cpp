@@ -5,10 +5,9 @@
 #include<string>
 #include<stdlib.h>
 #include<vector>
-<<<<<<< HEAD
-=======
+
 #include<pthread.h>
->>>>>>> a2f1ecf653bbfd27af120a2e385e3828e59571d8
+
 #include<cstdlib>
 
 #define _USE_MATH_DEFINES
@@ -40,21 +39,20 @@ int main(void) {
 	// eta = kappa/(C rho): Physical parameter.
 	// dx, dy, dt: step sizes. We simulate a square grid of side length 1. Time step dt is dictated by numerical stability.
 	// T_old, T_new: old and updated temperatures. Both have the format T[0:size_x-1][0:size_y-1]
-	const int size_xy = 2000;
-	const int n_steps = 10000;
-	const double eta = 1.0;
-	const double dx = 1.0 / size_xy;
-	const double dt = (dx * dx * dx * dx) / (2 * eta * (dx * dx + dx * dx));
+	const int size_xy = 2048;
+	const int n_steps = 10001;
+	const float eta = 1.0;
+	const float dx = 1.0 / size_xy;
+	const float dx2 = dx * dx;
+	const float dt = (dx2 * dx2) / (4.0 * eta * dx2);
 	std::vector<unsigned char> image(size_xy * size_xy * 4);
 	int i, j;
 	unsigned int k;
 	
-	double* T_old = new double [size_xy * size_xy];
-	double* T_new = new double [size_xy * size_xy];
+	float* T_old = new float [size_xy * size_xy];
+	float* T_new = new float [size_xy * size_xy];
 	
-	for (i = 0; i < size_xy * size_xy; i++){
-		T_old[i] = 0.0;
-	}
+	memset(T_old, 0.0, size_xy * size_xy * 4);
 
 	// Enforce interesting fixed boundary condition: 
 	// Temperature on the axes y = 0 and y = 1 vary with sin^2 and cos^2 respectively.
@@ -65,22 +63,13 @@ int main(void) {
 		k_right = i * size_xy + size_xy - 1;
 		k_top = i;
 		k_bottom = (size_xy - 1)*size_xy + i; 
-		T_old[k_left] = cos(i * M_PI / double(size_xy)) * cos(i * M_PI / double(size_xy));
-		T_old[k_right] = sin(i * M_PI / double(size_xy)) * sin(i * M_PI / double(size_xy));
-		T_old[k_top] = 1 - i/double(size_xy);
-		T_old[k_bottom] = 1 - i/double(size_xy);
-<<<<<<< HEAD
-		T_new[k_left] = T_old[k_left];
-		T_new[k_right] = T_old[k_right];
-		T_new[k_top] = T_old[k_top];
-		T_new[k_bottom] = T_old[k_bottom];
-=======
+		T_old[k_left] = cos(i * M_PI / float(size_xy)) * cos(i * M_PI / float(size_xy));
+		T_old[k_right] = sin(i * M_PI / float(size_xy)) * sin(i * M_PI / float(size_xy));
+		T_old[k_top] = 1 - i/float(size_xy);
+		T_old[k_bottom] = 1 - i/float(size_xy);
 	}
 
-	for(i = 0; i < size_xy * size_xy; i++){
-		T_new[i] = T_old[i];
->>>>>>> a2f1ecf653bbfd27af120a2e385e3828e59571d8
-	}
+	memcpy(T_new, T_old, size_xy * size_xy * 4);
 
 	// Solving the problem.
 	for (int n = 0; n < n_steps; n++) {
@@ -96,24 +85,19 @@ int main(void) {
 			}
 		}
 		
-		double* temp = T_old;
+		// Updating T_old to be T_new.
+		
+		float* temp = T_old;
 		T_old = T_new;
 		T_new = temp;
 
-		// Updating T_old to be T_new.
-		//for (i = 0; i < size_xy * size_xy; i++){
-		//	T_old[i] = T_new[i];		
-		//}
 		// Writing to png using lodepng (https://lodev.org/lodepng/)
-		if (n % 100 == 0) {
+		if (n % 10000 == 0) {
 			char filename[100] = "";
-<<<<<<< HEAD
+
 			sprintf(filename, "pics/heat_%05d.png", n);
-=======
-			sprintf(filename, "heat_%05d.png", n);
->>>>>>> a2f1ecf653bbfd27af120a2e385e3828e59571d8
 			for (k = 0; k < size_xy * size_xy; k++) {
-				image[k * 4] = static_cast<unsigned char>(T_old[k] * 255);
+				image[k * 4] = static_cast<unsigned char>(T_old[k] * 255.0);
 				image[k * 4 + 1] = 0;
 				image[k * 4 + 2] = 0;
 				image[k * 4 + 3] = 255;
