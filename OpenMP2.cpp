@@ -56,7 +56,7 @@ int main(void) {
 	// dx, dy, dt: step sizes. We simulate a square grid of side length 1. Time step dt is dictated by numerical stability.
 	// T_old, T_new: old and updated temperatures. Both have the format T[0:size_x-1][0:size_y-1]
 	const int size_xy = 2000;
-	const int n_steps = 10000;
+	const int n_steps = 10001;
 	const double eta = 1.0;
 	const double dx = 1.0 / size_xy;
 	const double dt = (dx * dx * dx * dx) / (2 * eta * (dx * dx + dx * dx));
