@@ -42,7 +42,7 @@ int main(void) {
 	// size_xy: numbers of subdivisions of grid in x and y direction (size_x = size_y for easier display of images). n_steps: number of time steps.
 	// eta = kappa/(C rho): Physical parameter.
 	// dx, dy, dt: step sizes. We simulate a square grid of side length 1. Time step dt is dictated by numerical stability.
-	// T_old, T_new: old and updated temperatures. Both have the format T[0:size_x-1][0:size_y-1]
+	// T_old, T_new: old and updated temperatures.
 	const int size_xy = 2048;
 	const int n_steps = 10001;
 	const float eta = 1.0;
